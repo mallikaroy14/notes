@@ -1,0 +1,25 @@
+-- git remote add origi url
+
+-- git reset --soft HEAD~n [n = number of commits]
+
+-- no flag [remove from ]
+--soft [just remove from commit but keep on staging]
+
+-- git rest --hard  [ emove the file from everywhere]
+
+-- to push
+git push origin branchName
+
+-- git branch
+
+
+-- to create new branch
+git branch branchNAme
+
+
+-to switch branch => git checkout branchName
+
+to merge the code of other branches to main : git merge bname (on parent branch)
+---
+To cherrypick but no commin => git cherry-pick <#code> --no-commit 
+
