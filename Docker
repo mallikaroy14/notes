@@ -1,0 +1,780 @@
+1. Create Java Spring
+with dependemcy :
+- PostgreSQL Driver sql
+- Spring Data JPA SQL
+- Spring web
+
+
+ 2. To create Dockerfile
+  -- create file from project name "Dockerfile"
+
+3. To run postgres image and create container
+
+docker run --name bajaj-docker-postgres-cont
+-d
+-v /Users/mallikaroy/gitlearn/bajaj-docker-data:/var/lib/postgresql/data
+-e POSTGRES_USER=postgres -e POSTGRES_PASSWORD=Mallika -e POSTGRES_DB=bajaj-docker -p 5434:5432 postgres
+
+4. To create docker-compose.yml file
+create file from project name docker-compose.yml
+
+5. write CRED operations and run the application
+6. create jar file : mvn clean install
+
+decide volume folder and create new folder and that path use for volume.
+pull install postgres
+
+To create postgres container:
+docker run --name db-container -v (path of volume) -d -e POSTGRES_USER=mallika -e POSTGRES_PASSWORD=password -e POSTGRES_DB=pms -p 5433:5432 postgres
+--(if there no postgress in local pc then use 5433:5433)
+
+psql -U mallika -d pms
+
+-----  7th march  -------
+To connect Database
+1. From localhost to db : 5433: 5432
+2. Access DB from container to another container than use container ip address : 5432
+3. Request from another PC -> PC ic address : 5433
+
+1. When we create jar it first run and test all thing :
+mvn clean install -DskipTests
+docker run --name  bajaj-docker-app-cont -d -p 8081:8080 web-app
+docker run --name  bajaj-docker-app-cont -d -p 8081:8080 bajaj-docker
+
+2. change need to create jar file
+<finalName>jpa-project</finalName>
+
+3. create Dockerfile from project name
+FROM eclipse-temurin:21-jdk-alpine
+WORKDIR /app
+COPY target/jpa-project.jar .
+EXPOSE 8080
+CMD ["java","-jar","jpa-project.jar"]
+
+-- compose-file.yml
+version: '3.8'
+
+services:
+  db:
+    image: postgres
+    container_name: jpa-container
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: jpa
+    ports:
+      - "5434:5432"  -- 5432 is for psql it will never change
+    volumes:
+      - /Users/mallikaroy/gitlearn/container-db-data:/var/lib/postgresql/data
+  app:
+    build: .
+    image: web-app
+    container_name: web-app-cont
+    ports:
+      - "8081:8080"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/jpa    - jpa: db name
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: postgres
+    depends_on:
+      - db
+
+
+1. create jar file
+///Compose :
+ create jar: mvn clean install -DskipTests
+-----To start and build compose: docker compose up --build
+(It will create image as well as container and container should be in running status.)
+
+Now check api calls in post man.
+
+Use case -
+
+frontend :
+backend : create image and upload it on docker
+
+
+------------
+To install jenkin from services run on terminal:
+:brew install jenkins-lts
+:brew services start jenkins-lts
+
+
+To install jenkin from jar file
+: java -jar jar_name
+
+Open localhost:8080 on chrome -> go to the path of jenkin password -> copy that password and paste it -> click ok
+(/Users/mallikaroy/.jenkins/secrets/initialAdminPassword)
+
+--jenkin works on default on 8080
+
+Dashboeard-> new Item-> name {First create JPA Spring project} -> user-management-system-pipeline
+-> GitHub Project -> GitHub hook trigger for GITsam polling -> write script -> apply
+Dashboard -> pipeline Syntax -> checkout -> put your url -> branch name -> */main -> it will generate url
+
+install dd plugin -> Git, maven , docker, pipeline
+
+script -
+pipeline {
+    agent any
+    stages{
+        stages("Checkout for git"){
+            steps {
+               ( checkout syntax https://github.com/mallikaroy14/JPA-learning
+                  }
+               }
+          stages("Checkout for git"){
+              steps {
+                  bat "mvn clean install -DskipTests"
+                    }
+                }
+
+         stages("Build Docker image"){
+            steps {
+                bat "docker compose up --build"
+                    }
+                }
+}
+
+ stage('create jar'){
+              steps {
+                  sh 'mvn clean install -DskipTests'
+                }
+            }
+         stage('Build Docker image'){
+            steps {
+                sh 'docker compose up --build'
+             }
+         }
+
+       stages("create container"){
+              steps{
+                  bat "docker build -t ums-images ."
+                                    }
+                                }
+
+         stages("create container"){
+                steps{
+                     bat "docker run --name container_name -d p 8081:8080"
+                         }
+                   }
+    }
+
+
+
+/// To cretw image and container from jenkin pipeline
+
+pipeline {
+    agent any
+
+    stages {
+        stage('Checkout for git'){
+            steps {
+                checkout scmGit(branches: [[name: '*/main']], extensions: [], userRemoteConfigs: [[url: 'https://github.com/mallikaroy14/JPA-learning']])                  }
+            }
+         stage('create jar'){
+            steps {
+                  sh 'mvn clean install -DskipTests'
+                }
+            }
+
+         stage("create image"){
+              steps{
+                  sh 'docker build -t jpa-images .'
+                   }
+            }
+
+         stage("create container"){
+                steps{
+                     sh 'docker run --name jpaProject -d -p 8081:8080 jpa-images'
+                    }
+            }
+    }
+}
+
+
+///Form compose To crerate image and container from jenkins
+pipeline {
+    agent any
+
+    stages {
+        stage('Checkout for git'){
+            steps {
+                checkout scmGit(branches: [[name: '*/main']], extensions: [], userRemoteConfigs: [[url: 'https://github.com/mallikaroy14/JPA-learning']])                  }
+            }
+         stage('create jar'){
+            steps {
+                  sh 'mvn clean install -DskipTests'
+                }
+            }
+
+         stages("Build Docker image"){
+            steps {
+                sh "docker compose up --build"
+                }
+            }
+    }
+}
+
+    Jenkins
+    username: mallikaroy
+    password :mallika
+
+
+ —————Docker assesmnet
+ 1. create image
+ 2. connect with database.
+ 3. pipleine jenkin with kubernate
+
+
+----------------------Kubernates--------------------------
+
+
+mvn clean install -DskipTests
+docker compose up --build
+
+
+To check database
+exec : psql -U userName -d dbName
+check tables: \dt
+
+To change port of jenkins
+whiteLevel Issue : change port : java -jar jenkins.war --httpPort=8081
+
+
+Cluster -> colection of nodes
+worker node is place where all node are there we can create , delete, and container rahta hai ayaha
+There is default - Kubelete, Docker, Kube proxy
+
+pod : container ka ghar (smallest VM ) container can't live without pod , multiple container can live in 1 pod, generally write 1 container in 1 pod
+It has persistant volume
+
+There is 1 master node
+
+Master node
+We communicate with master node : REST API server by cli, program, webApp
+
+etcd: key value light weight db, of all cluster : It is primary dataStore of Kubernates
+
+scheduler :
+controller Manager : create all nodes and manage
+every node has own ips.
+
+service works as elasticIP and load balancer: An abstraction in kubernetes which defines a logical set of pods and a policy to access them.
+
+kubctl : terminal cli for kubernetes
+
+Kublete: runs on each node and ensures containers are running in a pod.
+Kubernetes a node is a worker machine.
+
+
+brew install minikube
+ brew link minikube
+ minikube start
+
+
+create image of postgres:
+docker run --name db-container -v /Users/mallikaroy/gitlearn/assessment_volume:/var/lib/postgresql/data -d -e POSTGRES_USER=postgres -e POSTGRES_PASSWORD=Mallika -e POSTGRES_DB=postgres -p 5434:5432 postgres
+
+create project image:
+docker build -t spring-jenkins .
+docker run --name jenkin-container -d -p 8081:8080 spring-jenkins
+
+-----------------
+cli: kubectl
+We as a developers will work on these thing mostly:
+1. Deployment: create deployment object
+2. Pod ( as code written in Deployment)
+3. replica set ( as code written in Deployment)
+4. Service
+
+Docker user : mallikaroy
+Docker password: Kumud@134
+
+To create image
+docker build -t mallikaroy/spring-jenkins:1.0 .
+
+To push image in docker hub:
+docker push mallikaroy/spring-jenkins:1.0
+
+kubectl cluster-info
+
+To create a deplyment: 3 pod in 3 different container
+kubectl create deployment sample-jenkins-app-dep --image=mallikaroy/spring-jenkins:1.0 --port=8080 --replicas=3
+
+To check all containers
+kubectl get deployment
+
+To connect docker to kubernate
+eval $(minikube docker-env)
+
+To get all pods:
+kubectl get pod
+
+To check logs of pod
+kubectl logs <pod id>
+
+To create service :(To access pod from outerside )
+kubectl expose deployment sample-jenkins-app-dep --type=NodePort
+
+ To delete service name:
+ kubectl delete service <serviceName>
+
+ To get all services:
+ kubectl get service
+
+ kubernetes               ClusterIP   10.96.0.1      <none>        443/TCP          23h
+ sample-jenkins-app-dep   NodePort    10.99.88.132   <none>        8080:31539/TCP   36s
+
+clusterIp -
+8080:31539/TCP ( 31539: service port, 8080: we have assign 8080 at the time of deployment of pod )
+
+To get url of service where our application will run:
+minikube service sample-jenkins-app-dep --url
+
+minikube service spring-boot-app-service --url
+
+open on browser: http://127.0.0.1:56261/api/v1/get/
+
+Different types of Services :
+1. ClusterIP
+2. NodePrt
+3. Load Balancer
+
+every deplymmnet ka ek pod create hoga
+
+
+In Project use yml file for deploymet.
+
+create image of project in docket and push project on docker hub.
+we have to expose web-app to outer world but we cannot expose database pod.
+
+delete service:
+kubectl delete service sample-jenkins-app-dep
+
+delete deployment:
+kubectl delete deployment sample-jenkins-app-dep
+
+
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: postgres-pv-claim
+  labels:
+    app: postgres
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: postgres
+  labels:
+    app: postgres
+spec:
+  ports:
+    - port: 5432
+  selector:
+    app: postgres  //deployment name should be same
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: postgres
+  labels:
+    app: postgres
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: postgres
+  template:
+    metadata:
+      labels:
+        app: postgres
+    spec:
+      containers:
+        - name: postgres
+          image: postgres:latest
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 5432
+          env:
+            - name: POSTGRES_DB
+              value: "mydatabase"
+            - name: POSTGRES_USER
+              value: "myuser"
+            - name: POSTGRES_PASSWORD
+              value: "mypassword"
+          volumeMounts:
+            - mountPath: /var/lib/postgresql/data
+              name: postgres-storage
+      volumes:
+        - name: postgres-storage
+          persistentVolumeClaim:
+            claimName: postgres-pv-claim
+
+To create service, deployment, postgres /run db-deployment.yml  (-f for file)
+kubectl apply -f db-deployment.yml
+
+docker build -t mallikaroy/bajajmall-app1.0 .
+
+docker push mallikaroy/bajajmall-app1.0
+
+docker pull mallikaroy/bajajmall-app1.0
+
+kubectl apply -f app-deployment.yml
+
+To access
+kubectl get pod
+kubectl exec -it <pod name> /bin/bash
+
+
+
+psql -U postgres -d bajajmall
+
+minikube service postgres --url
+minikube service kubernate-demo-app-dep --url
+
+
+To open dashboard:
+minikube dashboard
+
+
+To delete service:
+kubectl delete service postgres
+
+To delete deployment:
+kubectl delete deployment
+
+
+------------------db-deployment------
+apiVersion: v1
+        kind: PersistentVolumeClaim
+        metadata:
+          name: postgres-pv-claim-postgres
+          labels:
+            app: postgres
+        spec:
+          accessModes:
+            - ReadWriteOnce
+          resources:
+            requests:
+              storage: 1Gi
+        ---
+        apiVersion: apps/v1
+        kind: Deployment
+        metadata:
+          name: postgres
+          labels:
+            app: postgres
+        spec:
+          replicas: 3
+          selector:
+            matchLabels:
+              app: postgres
+          template:
+            metadata:
+              labels:
+                app: postgres
+            spec:
+              containers:
+                - name: postgres-cont
+                  image: postgres:latest
+                  imagePullPolicy: IfNotPresent
+                  ports:
+                    - containerPort: 5432
+                  env:
+                    - name: POSTGRES_DB
+                      value: "bajajmall"
+                    - name: POSTGRES_USER
+                      value: "postgres"
+                    - name: POSTGRES_PASSWORD
+                      value: "postgres"
+                  volumeMounts:
+                    - mountPath: /var/lib/postgresql/data
+                      name: postgres-storage
+              volumes:
+                - name: postgres-storage
+                  persistentVolumeClaim:
+                    claimName: postgres-pv-claim-postgres
+        ---
+        apiVersion: v1
+        kind: Service
+        metadata:
+          name: postgres
+          labels:
+            app: postgres
+        spec:
+          ports:
+            - port: 5432
+          selector:
+            app: postgres
+
+
+ ----------------app-deployment--------------
+
+ apiVersion: apps/v1
+ kind: Deployment
+ metadata:
+   name: bajajmall-app
+   labels:
+     app: bajajmall-app
+ spec:
+   replicas: 2
+   selector:
+     matchLabels:
+       app: spring-boot-app
+   template:
+     metadata:
+       labels:
+         app: spring-boot-app
+     spec:
+       containers:
+         - name: bajaj-app-cont
+           image: mallikaroy/bajajmall-app2.0:latest
+           imagePullPolicy: IfNotPresent
+           ports:
+             - containerPort: 8080
+           env:
+             - name: SPRING_DATASOURCE_URL
+               value: "jdbc:postgresql://postgres:5432/bajajmall"
+             - name: SPRING_DATASOURCE_USERNAME
+               value: "postgres"
+             - name: SPRING_DATASOURCE_PASSWORD
+               value: "postgres"
+ ---
+ apiVersion: v1
+ kind: Service
+ metadata:
+   name: spring-boot-app-service
+   labels:
+     app: bajajmall-app
+ spec:
+   type: NodePort
+   ports:
+     - port: 8080
+       targetPort: 8080
+       nodePort: 30000  # You can choose any available port in your cluster
+   selector:
+     app: bajajmall-app
+
+
+----------------------===================------------------------
+
+To check database in kubernete
+Go to postgres pod terminal and  exec: psql -U <username> <database>
+
+If any issue occurred: check that pod log : kubectl logs pos
+
+
+
+Add this on
+http://http//192.168.10.125:8080/github-webhook/
+
+
+
+For ES2 deployment -> Need to add jenkins, docker, EKS(on the place of mimikube)
+First create image of project and get pull of image in EC2.
+
+---compose
+version: '3.8'
+
+services:
+  db:
+    image: postgres
+    container_name: jpa-container
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: jpa
+    ports:
+      - "5434:5432"
+    volumes:
+      - /Users/mallikaroy/gitlearn/jpa-volume:/var/lib/postgresql/data
+  app:
+    build: .
+    image: web-app
+    container_name: web-app-cont
+    ports:
+      - "8081:8080"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/jpa
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: postgres
+    depends_on:
+      - db
+
+------Dockerfile
+
+FROM eclipse-temurin:21-jdk-alpine
+WORKDIR /app
+COPY target/jpa-project.jar .
+EXPOSE 8080
+CMD ["java","-jar","jpa-project.jar"]
+
+
+----db-depl
+
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: postgres-pv-volume
+  labels:
+    app: postgres
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: postgres
+  labels:
+    app: postgres
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: postgres
+  template:
+    metadata:
+      labels:
+        app: postgres
+    spec:
+      containers:
+        - name: postgres
+          image: postgres:latest
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 5432
+          env:
+            - name: POSTGRES_DB
+              value: "bajajmall"
+            - name: POSTGRES_USER
+              value: "postgres"
+            - name: POSTGRES_PASSWORD
+              value: "postgres"
+          volumeMounts:
+            - mountPath: /var/lib/postgresql/data
+              name: postgres-storage
+      volumes:
+        - name: postgres-storage
+          persistentVolumeClaim:
+            claimName: postgres-pv-volume
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: postgres
+  labels:
+    app: postgres
+spec:
+  ports:
+    - port: 5432
+  selector:
+    app: postgres
+
+
+    -----app-deploy-------------------
+
+
+    apiVersion: apps/v1
+    kind: Deployment
+    metadata:
+      name: bajajmall-app
+      labels:
+        app: bajajmall-app
+    spec:
+      replicas: 2
+      selector:
+        matchLabels:
+          app: bajajmall-app
+      template:
+        metadata:
+          labels:
+            app: bajajmall-app
+        spec:
+          containers:
+            - name: bajaj-app-cont
+              image: mallikaroy/bajajmall-app2.0:latest
+              imagePullPolicy: IfNotPresent
+              ports:
+                - containerPort: 8080
+              env:
+                - name: SPRING_DATASOURCE_URL
+                  value: "jdbc:postgresql://postgres:5432/bajajmall"
+                - name: SPRING_DATASOURCE_USERNAME
+                  value: "postgres"
+                - name: SPRING_DATASOURCE_PASSWORD
+                  value: "postgres"
+    ---
+    apiVersion: v1
+    kind: Service
+    metadata:
+      name: bajajmall-app-service
+      labels:
+        app: spring-boot-app
+    spec:
+      type: NodePort
+      ports:
+        - port: 8080
+          targetPort: 8080
+          nodePort: 30000  # You can choose any available port in your cluster
+      selector:
+        app: bajajmall-app
+
+        ------------------
+
+
+ECS
+ECR - image will pull in ECR
+ECS - container of ECR image will crete in ECS and
+
+ECR -> Create -> private-> ]name: sample-app-> create Repository
+Repository create > try
+create image of app same name of repository
+
+Create IAM user and give access to -> S3, administration
+
+View push command -> copy paste command from aws to project terminal.
+-> aws ecr get-login-password --region ap-south-1 | docker login --username AWS --password-stdin 590183736075.dkr.ecr.ap-south-1.amazonaws.com
+-> docker build -t sample-app .
+-> docker tag sample-app:latest 590183736075.dkr.ecr.ap-south-1.amazonaws.com/sample-app:latest
+-> docker push 590183736075.dkr.ecr.ap-south-1.amazonaws.com/sample-app:latest
+
+check on ECR -> sample-app -> check images added.
+
+
+------
+
+AECS ->
+Create VPC :VPC only>  IPv4 CIDR manual input > 10.0.0.0/24
+create subnet ->
+
+create cluster -> clustername-> Infrastructure : EC2 -> OS: Amzon Linuux2_> t2.micro > min: 1, max: 5, imag vol : 30, VPA: add VPC that you have create earlier.
+-> select subnet that you have create -> creating cluster will take some time.
+It will create 1EC2 instance
+
+   Pod in kubernete = task here
+   open cluster -> Tasks ->Run new task -> Task -> Desired task :1 -> volume: will create volume
+
+create new task defination(giving memory to containers) -> Amzon EC2 instance -> 1vcpu -> container -1 -> add name sample-app and add ECR RMI url ->
+container port : 8080 -> TCP -> Port(host) : 8080 -> created
+
+Now task and container s running -> Run task
+
+Return to cluster ->(select existing...) choose task -> GO girl!!!1
+
+
+
+
+
+

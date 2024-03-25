@@ -1,0 +1,694 @@
+There are six primary data types (String, Character, Int, Float, Double, and Bool), and
+four compound types (Array, Set, Dictionary, Tuples).
+
+let: define a constant
+let number:Int =12 or let number =12;
+
+var is variable
+
+string interpolation : print("number is \(num)")
+
+var name: String  //declaire
+name = "Mallika"   // initialize
+print("number is \(name)")
+
+//conditions
+
+if num > 20
+{
+    print("less than 20")
+}else {
+     print("wrong condition")
+}
+
+-----------------
+if num < 20
+{
+    print("less than 20")
+}else if num == 23
+{
+     print("num = 23")
+}
+else {
+     print("wrong condition")
+}
+
+---------------------Array---------------
+
+var name: [String] = ["Mallika", "Rosy", "Hulk"]
+
+print(name[0])
+print(name.count)
+
+--------------------------------------
+var name: [String] = ["Mallika", "Rosy", "Hulk"]
+
+name.append("Roy")
+
+for n in name{
+    print(n)
+}
+---------
+
+for n in 1...5
+{
+    print(n)
+}
+
+---------------
+var n = 1
+while(n < 5)
+{
+    print(n)
+    n+=1  ///no unary opertor n++
+}
+-----------
+var status = 2
+var a = status == 2 ? 25: 100
+print(a)
+
+---------function---------
+
+func doSomething()
+{
+    print("this is a function")
+}
+
+doSomething()
+
+----------function return----
+
+func doSomething() -> Int
+{
+    return 23
+}
+
+print(doSomething())
+
+-----------------------------
+func doSomething(num1:Int, num2:Int) -> Int
+{
+
+    return num1 + num2
+}
+
+print(doSomething(num1 : 23,num2 : 24))
+
+--------------------------------------------
+
+heap(ref) and stack(value)
+structure are value type
+
+-------------------class----------------------
+class User {
+
+    var name : String = ""
+    var age : Int = 0
+
+    func printDetails()
+    {
+        print("name is \(name) and age is \(age)")
+    }
+}
+
+var u1 = User()
+u1.name = "mallika"
+u1.age = 23
+u1.printDetails()
+------------Class with constructor--------------------
+constructor with init
+
+class User {
+
+    var name : String = ""
+    var age : Int = 0
+
+    init(name : String,age : Int){
+        self.name = name
+        self.age = age
+    }
+
+    func printDetails()
+    {
+        print("name is \(name) and age is \(age)")
+    }
+}
+
+var u1 = User(name:"Mallika", age:23)
+u1.printDetails()
+------------------------------------
+
+class User {
+
+    var name : String = ""
+    var age : Int = 0
+
+    func printDetails()
+    {
+        print("name is \(name) and age is \(age)")
+    }
+}
+
+var u1 = User()
+u1.name = "Mallika"
+u1.age = 21
+
+var u2 = u1
+u2.name = "Ruby"
+
+u1.printDetails()
+u2.printDetails()
+
+////name is Ruby and age is 21
+    name is Ruby and age is 21
+-----------------------------------------------------
+
+If we not initialize variable in class or structure we have to pass values in constructor
+
+--------------------Struct----------------------------
+
+struct User
+{
+    var name : String
+    var age : Int
+
+    func printDetails(){
+        print("name is \(name) and age is \(age)")
+    }
+}
+
+var v1 = User(name : "Mallika", age : 23)
+v1.printDetails()
+
+----------------------Struct---------------------------------
+
+struct User
+{
+    var name : String
+    var age : Int
+
+    func printDetails(){
+        print("name is \(name) and age is \(age)")
+    }
+}
+
+var v1 = User(name : "Mallika", age : 23)
+v1.printDetails()
+
+var v2 = v1
+v2.name = "Rosy"
+v2.printDetails()
+
+-------------------------------------------------
+use inspect buttin in simulator for direct code access with widget
+
+1. For Horizontal
+
+ HStack{
+            Text("Hello Bajaj")
+            Text("Hello Bajaj")
+        }
+2. For Veritical
+            VStack(spacing:10){
+                       Text("Hello Bajaj")
+                       Text("Hello Bajaj")
+                   }
+ 3. To set text color:   .foregroundColor(.blue)
+
+  VStack(spacing:10){
+            Text("Hello Bajaj")
+            Text("Hello Bajaj")
+                .font(.system(size: 20, weight:.bold))
+                .frame(width: 250, height: 50)
+                .foregroundColor(/*@START_MENU_TOKEN@*/.blue/*@END_MENU_TOKEN@*/)
+                .background(Color.red)
+            Image(systemName: "flower")
+                .resizable()
+                .aspectRatio(contentMode: /*@START_MENU_TOKEN@*/.fill/*@END_MENU_TOKEN@*/)
+                .frame(width:100,height:100)
+        }
+
+
+        //
+          LinearGradient(colors: [.blue,.white,.blue], startPoint: .top, endPoint: UnitPoint.bottom)
+
+
+
+
+//
+//  ContentView.swift
+//  Demo
+//
+//  Created by Mallika Roy on 19/03/24.
+//
+
+import SwiftUI
+
+struct WeatherView: View {
+    var body: some View {
+        ZStack{
+            Color(.black)
+
+            VStack{
+
+            VStack{
+                    Text("Mumbai, India")
+                        .font(.system(size: 30, weight: .bold))
+                        .foregroundStyle(/*@START_MENU_TOKEN@*/.blue/*@END_MENU_TOKEN@*/)
+
+                    Text("Today")
+                        .foregroundStyle(.white)
+
+                    Spacer()
+
+                    Image(systemName: "cloud.sun")
+                        .resizable()
+                        .aspectRatio(contentMode: /*@START_MENU_TOKEN@*/.fill/*@END_MENU_TOKEN@*/)
+                        .frame(width: 70, height: 70)
+                        .foregroundColor(.white)
+
+                    Text("10°")
+                        .font(.system(size: 30, weight: .bold))
+                        .foregroundStyle(.white)
+
+                    Spacer()
+
+                VStack{
+
+                    Text("Tommorrow")
+                        .foregroundStyle(.white)
+
+                    HStack{
+                        Image(systemName: "cloud.drizzle")
+                            .resizable()
+                            .aspectRatio(contentMode: /*@START_MENU_TOKEN@*/.fill/*@END_MENU_TOKEN@*/)
+                            .foregroundColor(.white)
+
+                        Text("5°")
+                            .font(.system(size: 30))
+                    }
+                    Spacer()
+                    HStack {
+                        DayItems(day: "Mon", temp: 4)
+                        DayItems(day: "Tue", temp: 4)
+                        DayItems(day: "wed", temp: 4)
+                        DayItems(day: "Thru", temp: 4)
+                        DayItems(day: "Fri", temp: 4)
+                        DayItems(day: "Sat", temp: 4)
+                        DayItems(day: "Sun", temp: 4)
+                    }
+                }
+                }
+            }
+            .padding(.vertical,40)
+        }
+    }
+}
+
+#Preview {
+    WeatherView()
+}
+
+
+struct DayItems: View{
+
+    var day:String
+    var temp: Int
+    var body: some View {
+        VStack (spacing:3){
+            Text(day)
+                .font(.system(size: 15))
+                .foregroundStyle(.white)
+
+            Text("\(temp)°")
+                .font(.system(size: 15))
+                .foregroundStyle(.white)
+        }
+    }
+}
+
+
+========================List==============================
+
+//
+//  ProductsView.swift
+//  DemoProject
+//
+//  Created by Mallika Roy on 20/03/24.
+//
+
+import SwiftUI
+
+struct ProductsView: View {
+    var body: some View {
+
+        NavigationView {
+            List(/*@START_MENU_TOKEN@*/0 ..< 5/*@END_MENU_TOKEN@*/) { item in
+                HStack(spacing:25){
+                    Image(systemName: "shippingbox")
+                        .resizable()
+                        .aspectRatio(contentMode: /*@START_MENU_TOKEN@*/.fill/*@END_MENU_TOKEN@*/)
+                        .frame(width: 70,height: 100)
+                        .foregroundColor(/*@START_MENU_TOKEN@*/.blue/*@END_MENU_TOKEN@*/)
+
+                    VStack(alignment: .leading){
+                        Text("Product Items")
+                            .foregroundStyle(.white)
+                            .font(.system(size: 30, weight: .bold))
+
+                        Text("Electronics")
+                            .foregroundStyle(.gray)
+                            .font(.system(size: 20, weight: .bold))
+                    }
+                }
+            }
+            .navigationTitle("All Products")
+        }
+    }
+}
+
+#Preview {
+    ProductsView()
+}
+===========================================
+
+//
+//  ProductsView.swift
+//  DemoProject
+//
+//  Created by Mallika Roy on 20/03/24.
+//
+
+import SwiftUI
+
+struct ProductsView: View {
+    var body: some View {
+
+        NavigationView {
+            List(/*@START_MENU_TOKEN@*/0 ..< 5/*@END_MENU_TOKEN@*/) { item in
+                NavigationLink(
+                    destination: ProductDetailView(),
+                    label: {
+                        HStack(spacing:25){
+                            Image(systemName: "shippingbox")
+                                .resizable()
+                                .aspectRatio(contentMode: /*@START_MENU_TOKEN@*/.fill/*@END_MENU_TOKEN@*/)
+                                .frame(width: 70,height: 100)
+                                .foregroundColor(/*@START_MENU_TOKEN@*/.blue/*@END_MENU_TOKEN@*/)
+
+                            VStack(alignment: .leading){
+                                Text("Product Items")
+                                    .foregroundStyle(.white)
+                                    .font(.system(size: 30, weight: .bold))
+
+                                Text("Electronics")
+                                    .foregroundStyle(.gray)
+                                    .font(.system(size: 20, weight: .bold))
+                            }
+                        }
+                    }
+                )
+            }
+            .navigationTitle("All Products")
+        }
+    }
+}
+
+#Preview {
+    ProductsView()
+}
+======================
+
+Interface = protocol -> abstrct method -> Identifiable ( Predefine protocol named with able)
+
+
+TO DO SF image -> change with random url and
+
+half screen image
+price text should be on image
+than image name
+image description
+
+
+
+//
+//  ProductDetailView.swift
+//  DemoProject
+//
+//  Created by Mallika Roy on 20/03/24.
+//
+==============
+import SwiftUI
+
+struct ProductDetailView: View {
+
+    var product : Product
+    var body: some View {
+        Text(product.name)
+    }
+}
+
+#Preview {
+    ProductDetailView(product: ProductList().products.first!)
+}
+==============
+
+//
+//  Products.swift
+//  DemoProject
+//
+//  Created by Mallika Roy on 20/03/24.
+//
+
+import Foundation
+
+struct Product : Identifiable
+{
+    var id = UUID()
+    var name : String
+    var price : Double
+    var category : String
+    var description : String
+    var image : String
+}
+
+struct ProductList
+{
+    var products : [Product] = [
+
+            Product(name: "Wireless Headphones", price: 99.99, category: "Electronics", description: "Premium wireless headphones with active noise cancellation", image: "speaker.wave.3.fill"),
+            Product(name: "Smartwatch", price: 149.99, category: "Electronics", description: "Waterproof smartwatch with heart rate monitoring and fitness tracking", image: "waveform.path.ecg.rectangle.fill"),
+            Product(name: "Leather Wallet", price: 49.99, category: "Fashion", description: "Handcrafted leather wallet with multiple card slots and cash compartment", image: "wallet.pass.fill"),
+            Product(name: "Running Shoes", price: 79.99, category: "Sports", description: "High-performance running shoes with breathable mesh and cushioned soles", image: "hare.fill"),
+            Product(name: "Portable Bluetooth Speaker", price: 59.99, category: "Electronics", description: "Compact Bluetooth speaker with crisp sound quality and long battery life", image: "speaker.zzz.fill"),
+            Product(name: "Stainless Steel Water Bottle", price: 19.99, category: "Home & Kitchen", description: "Double-walled stainless steel water bottle, keeps drinks cold for 24 hours", image: "drop.triangle.fill"),
+            Product(name: "Graphic T-Shirt", price: 29.99, category: "Fashion", description: "Cotton graphic t-shirt with unique design and comfortable fit", image: "tshirt.fill"),
+            Product(name: "Digital Camera", price: 299.99, category: "Electronics", description: "Compact digital camera with 24MP sensor and 4K video recording", image: "camera.fill"),
+            Product(name: "Yoga Mat", price: 39.99, category: "Sports", description: "Non-slip yoga mat with eco-friendly materials and carrying strap", image: "fitness.app.fill"),
+            Product(name: "Stainless Steel Kitchen Knife Set", price: 69.99, category: "Home & Kitchen", description: "Premium stainless steel knife set with ergonomic handles and storage block", image: "knife.fill"),
+            Product(name: "Wireless Charging Pad", price: 29.99, category: "Electronics", description: "Qi-enabled wireless charging pad compatible with smartphones and other devices", image: "bolt.fill.batteryblock"),
+            Product(name: "Classic Sunglasses", price: 39.99, category: "Fashion", description: "Timeless aviator sunglasses with UV protection and metal frame", image: "eye.fill"),
+            Product(name: "Resistance Bands Set", price: 24.99, category: "Sports", description: "Set of 5 resistance bands with varying levels of resistance, ideal for home workouts", image: "bandage.fill"),
+            Product(name: "Cast Iron Skillet", price: 49.99, category: "Home & Kitchen", description: "Pre-seasoned cast iron skillet for versatile cooking, oven and grill safe", image: "burn"),
+            Product(name: "True Wireless Earbuds", price: 79.99, category: "Electronics", description: "Sleek true wireless earbuds with touch controls and long battery life", image: "ear.fill")
+
+    ]
+}
+=======================
+//
+//  ProductsView.swift
+//  DemoProject
+//
+//  Created by Mallika Roy on 20/03/24.
+//
+
+import SwiftUI
+
+struct ProductsView: View {
+
+    var products : [Product] = ProductList().products
+
+    var body: some View {
+
+        NavigationView {
+            List(products) { product in
+                NavigationLink(
+                    destination: ProductDetailView(),
+                    label: {
+                        HStack(spacing:25){
+                            Image(systemName: product.image)
+                                .resizable()
+                                .aspectRatio(contentMode: /*@START_MENU_TOKEN@*/.fill/*@END_MENU_TOKEN@*/)
+                                .frame(width: 70,height: 100)
+                                .foregroundColor(/*@START_MENU_TOKEN@*/.blue/*@END_MENU_TOKEN@*/)
+
+                            VStack(alignment: .leading){
+                                Text(product.name)
+                                    .foregroundStyle(.white)
+                                    .font(.system(size: 20, weight: .bold))
+
+                                Text(product.category)
+                                    .foregroundStyle(.gray)
+                                    .font(.system(size: 15, weight: .bold))
+                            }
+                        }
+                    }
+                )
+            }
+            .navigationTitle("All Products")
+        }
+    }
+}
+
+#Preview {
+    ProductsView()
+}
+=======================
+
+//
+//  ContentView.swift
+//  DemoProject
+//
+//  Created by Mallika Roy on 20/03/24.
+//
+
+
+import SwiftUI
+
+struct WeatherView: View {
+  @State var darkMode : Bool = true
+
+    var body: some View {
+        ZStack{
+            Color(darkMode ? .black : .white)
+
+            VStack{
+
+            VStack{
+                    Text("Mumbai, India")
+                        .font(.system(size: 30, weight: .bold))
+                        .foregroundStyle(/*@START_MENU_TOKEN@*/.blue/*@END_MENU_TOKEN@*/)
+
+                    Text("Today")
+                        .foregroundStyle(darkMode ? .white : .black)
+
+                    Spacer()
+
+                    Image(systemName: "cloud.sun")
+                        .resizable()
+                        .aspectRatio(contentMode: /*@START_MENU_TOKEN@*/.fill/*@END_MENU_TOKEN@*/)
+                        .frame(width: 70, height: 70)
+                        .foregroundColor(.white)
+
+                    Text("10°")
+                    .foregroundStyle(darkMode ? .white : .black)
+                        .font(.system(size: 30, weight: .bold))
+                        .foregroundStyle(.white)
+
+                    Spacer()
+
+                VStack{
+
+                    Text("Tommorrow")
+                        .foregroundStyle(darkMode ? .white : .black)
+                        .foregroundStyle(.white)
+
+                    HStack{
+                        Image(systemName: "cloud.drizzle")
+                            .resizable()
+                            .aspectRatio(contentMode: /*@START_MENU_TOKEN@*/.fill/*@END_MENU_TOKEN@*/)
+                            .foregroundColor(.white)
+
+                        Text("5°")
+                            .foregroundStyle(darkMode ? .white : .black)
+                            .font(.system(size: 30))
+                    }
+                    Spacer()
+                    HStack {
+                        DayItems(day: "Mon", temp: 4, dMode: darkMode)
+                        DayItems(day: "Tue", temp: 4, dMode: darkMode)
+                        DayItems(day: "wed", temp: 4, dMode: darkMode)
+                        DayItems(day: "Thru", temp: 4, dMode: darkMode)
+                        DayItems(day: "Fri", temp: 4, dMode: darkMode)
+                        DayItems(day: "Sat", temp: 4, dMode: darkMode)
+                        DayItems(day: "Sun", temp: 4, dMode: darkMode)
+                    }
+
+                    Spacer()
+                    Button{
+                        darkMode.toggle()
+                        print("click on button")
+                    } label: {
+                        Text("Change Mode")
+                            .font(.system(size: 25, weight: .medium))
+                            .frame(width: 250, height: 60)
+                            .background(.gray)
+                            .cornerRadius(10)
+                    }
+                }
+                }
+            }
+            .padding(.vertical,40)
+        }
+    }
+}
+
+#Preview {
+    WeatherView()
+}
+
+
+struct DayItems: View{
+
+    var day:String
+    var temp : Int
+    var dMode : Bool
+    var body: some View {
+z            Text(day)
+                .font(.system(size: 15))
+                .foregroundStyle(.white)
+
+            Text("\(temp)°")
+                .font(.system(size: 15))
+                .foregroundStyle(.white)
+        }
+    }
+}
+=======================================
+npm install
+
+npm install -g nodemon
+npm run start
+
+// null safe condition
+var data : String
+if let d = data{
+
+}
+guard let d = data{
+
+}
+
+///exceptional handling : do try catch
+
+do
+{
+   try doSomething()
+}catch {
+
+}
+
+///
+
+install : VS code, mongo DB, Docker,
+
+
+async : TO make function acync to not run on main thread
+
+Codable : To convert into json readable
+
+dataTask for Put and Post
+For get : data
+
+
+

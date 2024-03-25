@@ -1,0 +1,564 @@
+Docker compose is an Utility tool to start and stop multiple container at the one time.
+We need to mention which container is going to run first
+
+--To create docker compose file
+1. Create file inside java application with .yml extenstion
+2. Add data inside compose file - It has same data like we do it through commands previously.
+but the only reason we are using compose is becaz we do not need to start the containers again and again by writing commands
+
+* If you are coming from outside of your PC then to access the container use laptop(host pc's) ip address
+* If you are inside host pc and want to access container then user localhost and use port which you used while port forwarding
+* If you want to access container to container use containers ip and containers port no
+
+
+Steps:- using docker compose file
+
+1. Create jar
+        mvn clean install -DskipTests
+
+2. Create Dockerfile in java application
+
+ //Dockerfile
+        FROM eclipse-temurin:21-jdk-alpine   --> Base image of Your jar container with java 21-jdk-alpine version
+        WORKDIR /app                         --> creadted one folder in root name app where we will save jar file
+        COPY target/bajaj-docker.jar .       --> Now when your destination is .(means app folder) it will take your jar file from target and create it's image for you
+        EXPOSE 8080                          --> web port 8080 of container
+        ENTRYPOINT ["java","-jar","bajaj-docker.jar"] --> Command for java jar build (java -jar jarname)
+
+        // Enterypoint execute always first if you want some command has to be run on entry mention here
+        // CMD commands we can change
+
+
+3. Create compose file with yaml extension
+
+version: '3.8'
+
+services:
+  db:
+    image: postgres
+    container_name: bajaj-docker-postgres-container
+    environment:
+      POSTGRES_USER: radhika
+      POSTGRES_PASSWORD: radhika
+      POSTGRES_DB: pms
+    ports:
+      - "5433:5432"
+    volumes:
+      - /Users/radhikamundada/Documents/BajajTraining/AWS/container-demo/compose-postgres-data:/var/lib/postgresql/data
+  app:
+    build: . //build dockerfile inside this project which will create new image for you
+    image: web-app-v1
+    container_name: web-app-container
+    ports:
+      - "8081:8080"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/pms
+      SPRING_DATASOURCE_USERNAME: radhika
+      SPRING_DATASOURCE_PASSWORD: radhika
+    depends_on:
+      - db  // postgres db
+
+4.  Do not forget to mention same database in main service(POSTGRES_DB: pms) and in the container created by it (SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/pms)
+
+5. Do not forget to create volume/empty folder and specify its correct path
+
+6. To create the images and run the containers
+        docker compose up --build
+
+7. Sometimes the container which was created by our image is exited first time bcz container becomes ready but database we want is not ready. Not in running state
+then we need to rerun the application
+
+8. Sometimes both the container exit so need to run again and give TCP/IP connection refused exception
+    docker compose up --build
+
+9. can check all the data inside postgres container
+    i. Go inside postgres container
+    ii. Click on exec
+    ii. # psql -U radhika postgres
+    where, radhika:- username given by you while creating postgres container
+    postgres:- db name
+    iv. to see all the tables:- \dt
+
+10. you will see db tables inside dbeaver also. Add aal the configurations inside dbever and perform CRUD operations.
+
+* It will create both the images and containers mentioned in compose file. And both will be running in docker engine, We can test it on dbeaver also with the configuration mentioned in docker.compose
+
+------------------
+-- How to push your image on docker hub
+
+Create docker hub account
+
+Terminal ->
+steps
+1. Login the docker
+    doker login
+
+// docker build -t radhikamundada/bajaj-container:1.0 . (check)
+2. Create version of your image
+docker tag demo-v1 radhikamundada/demo-v1:1.0
+
+demo-v1:- image name
+radhikamundada/demo-v1:1.0 :- our image with version mentioned
+
+3. Chcek Docker images - you can see your image on docker dashboard
+
+4. Push the image on docker hub with the version you mentioned
+docker push radhikamundada/bajaj-container:1.0
+
+-- To pull the image from docker hub
+1. Click on the pushed image
+2. Inside that public view and Pull the image
+--------------
+
+CI-CD pipeline
+
+code --> push -->  git hub/gitlab --> Jenkins --> Pipeline
+
+Pipeline - set of commands
+
+with the help of these commands CI-CD intergrate
+
+--------------
+***Installation of jenkins for mac***
+
+https://www.jenkins.io/download/lts/macos/
+
+1. We can download standalone application or war also
+
+2. For jar we need to run these commands evrytime we want to run jenkins
+    Install the latest LTS version: brew install jenkins-lts
+    Start the Jenkins service: brew services start jenkins-lts
+    Restart the Jenkins service: brew services restart jenkins-lts
+    Update the Jenkins version: brew upgrade jenkins-lts
+
+
+3. By default port of jenkins is 8080, we can change port number
+
+4. check on brower: localhost/8080
+
+5. window with location of password file will come - paste -> Next
+
+6. Download all reauired liberries
+
+7. Create user with password -> Save and finish
+
+by using war
+click on the war file it will download the war file
+in terminal go inside the downloaded folder of war
+ java -jar warfile --httpPort=portno
+
+Then on brower access it using that port no
+--------
+
+Jenkins pipeeline script
+
+Select item
+Provide item name
+
+pipeline -> Jenskins configuration
+pipeline{
+    agent any
+    stages{
+
+        stage("Checkout for git")
+        {
+            steps{
+                checkout scmGit(branches: [[name: '*/main']], extensions: [], userRemoteConfigs: [[url: 'https://github.com/sgupta8limitless/UserManagementSystem-Bajaj']])
+            }
+        }
+        stage('build') {
+            steps {
+                sh 'mvn --version'
+            }
+        }
+        stage("Building jar")
+        {
+            steps{
+                sh "mvn clean install"
+            }
+        }
+        stage("Build Docker image")
+        {
+            steps{
+                sh "docker build -t ums-image ."
+            }
+        }
+         stage("Create Container")
+        {
+            steps{
+                sh "docker run --name ums-container -d -p 8081:8080 ums-image"
+            }
+        }
+    }
+}
+
+Jenskins pipeline using docker compose
+stpeps
+1. Git hub - add git hub repo file
+2. github hook  select
+3. pipeline scm
+    git hub repo name
+    Branches to build - main
+    Jenkinsfile
+    save
+4. Add Jenkinsfile in spring project
+    Pipeline syantex -> select checekout from version control
+    -> git - Repository URL: git hub repo url
+    -> Branch Specifier (blank for 'any') - main
+    -> create checkout pipeline
+5. add on git repo
+6. Build now
+7. http://localhost:8085/api/v1/customers/  (localhost:8085- first mentioned prt in compose file)
+    Container should be in running
+
+pipeline{
+    agent any
+    stages{
+
+        stage("Checkout for git")
+        {
+            steps{
+                checkout scmGit(branches: [[name: '*/main']], extensions: [], userRemoteConfigs: [[url: 'https://github.com/sgupta8limitless/UserManagementSystem-Bajaj']])
+            }
+        }
+        stage('build') {
+            steps {
+                sh 'mvn --version'
+            }
+        }
+        stage("Building jar")
+        {
+            steps{
+                sh "mvn clean install"
+            }
+        }
+        stage("Deploy")
+        {
+            steps{
+                sh "docker compose up --build"
+            }
+        }
+    }
+}
+
+-- To change port number of war file in jenkins
+    java -jar warfilename --httpPort=8081
+    Serach on brower:  http://localhost:8081/  -- Through war
+    http://localhost:8080/  through jenkins service
+
+* Need to run once again - docker compose up --build
+* docker compose is giving tcp/ip connection refused error becasue it is creating image first but db is not created and it is tryin to access that database
+* To checek db in postgres container
+    psql -U radhika -d bajajmall
+
+    radhika:- username
+    bajajmall:- db name
+
+----
+*** Kubernates ***
+11/03/2024
+
+KUBERNATES CLUSETR
+
+node - Smallest vm
+Kubernate have
+1. Master node
+2. infinit working node - it has by defualt docker, kublet, kube proxy, pod(small vm - it has different configurations)
+
+ pod containes - volume + containers
+
+Master node contains
+Rest API server - give multiple api's to perform CRUD
+etcd - key value pair database which has all the data of your cluster for eg. When the clusetr created , pod related data
+Controller manager - Pod's  data opertaions management
+sceduler - scedule all the task which want to perform using REST API server
+
+we can acees master node using cli, program, ui
+----------------
+
+Worker node contains
+Kubelet - When master node sends the request to node - Kubelet handles all the requests
+Kube proxy - Kube-Proxy is a network proxy that runs on each node in a Kubernetes cluster. It is responsible for maintaining network connectivity between services and pods.
+Two pods communicate with each other
+Service - static ip - it will help to load balancing and then it will check which pod is failed where to assign other pod etc etc
+if pod failed then service will assign second pod
+-----------------------------
+
+12/03/2024
+
+We can push the kuberbnate data on docker hub or in gcr google container
+
+Objects of kubernates
+1. Deployment
+2. pod
+3. Replica set - No of pods to be , and if any pod is killed/ expired then kubernates read replica set
+4. service
+
+// To create deployment objects, service and pods
+//Kubernates-demo
+
+Steps:-
+00. Terminal :-
+start working with kubernate
+    minikube start
+    minikube dashboard
+to stop minikube
+    minikube stop
+
+0. Create simple spring boot application with spring web dependancy only
+
+1. Add file name of jar in pom.xml
+
+2. Create jar file
+    mvn clean install
+
+3. Build image
+    docker build -t radhikamundada/kubernates-demo:v1.0 .
+
+4. Push it on docker hub
+    docker push radhikamundada/kubernates-demo:v1.0
+
+5. -- To fetch kubectl cluser info
+    * kubectl cluster-info
+
+6. To create a pod( deployment obejct) which create pod
+    * kubectl create deployment kubernate-demo-app-dep --image=radhikamundada/kubernates-demo:v1.0 --port=8080 --replicas=3
+
+    kubernate-demo-app-dep:- deployement object name
+    image:- the image name which you pushed on docjer hub from which we are creating deployment object
+    port:8080:- pod port no
+    replicas:- no of replica set
+
+    created 3 pods and 3 pods contains 3 containers. each pod has 1 container. We can add different containers in one pod
+
+    -- If connection failed while creating deployment object
+      To connect docker to kubernate
+        eval $(minikube docker-env)
+
+7. -- To get deployment objects created by container
+    * kubectl get deployment
+
+    NAME                     READY   UP-TO-DATE   AVAILABLE   AGE
+   kubernate-demo-app-dep     0/3     3            0           14s
+
+
+8. You can see green deployment objects in kubernetes dashboard means your deployment objects are ready and created
+
+9.  -- To fetch pods created while creating deployment object
+    * kubectl get pod
+
+    -- To check logs of pod(to see error while creating deployment object )
+    * kubectl logs kubernete-demo-app-dep-655c6bcbd5-7cxbp
+    Here, kubernete-demo-app-dep-655c6bcbd5-7cxbp:- kubnate pod name
+
+10. -- To Create service to access container which is inside pod(which is inside kubernate cluster)
+    * kubectl expose deployment kubernate-demo-app-dep --type=NodePort
+
+    NodePort :- service type to access public
+
+11. -- To see all the services
+    * kubectl get service
+
+NAME                     TYPE        CLUSTER-IP      EXTERNAL-IP   PORT(S)          AGE
+kubernate-demo-app-dep   NodePort    10.108.236.67   <none>        8080:32177/TCP   28s  // service created by you
+kubernetes               ClusterIP   10.96.0.1       <none>        443/TCP          21h  // default
+
+    8080:32177/TCP
+    32177:- Service port
+    8080:- Deployment/pod port
+
+    -- To delete service
+    * kubectl delete service servicename
+
+12. -- To get service ip
+    * minikube service kubernate-demo-app-dep --url
+
+    You will get ip address of service and then you can perform all the operations using this ip
+    eg. http://127.0.0.1:58394/api/v1/get/test
+
+
+Different types of service
+1. NodePort
+2. Cluser ip
+3. Load balancer
+4. Ingress
+
+In case of docker and spring project with all crud operation
+
+we were pulling postgress from docker hub and also we created image for our project and then pushed into docker hub and created containers from this
+
+But in case of kubernate we will pull these images by creating deployment objects in kubernate and inside that kubernate deployment object we get pods were we have containers of these images
+
+
+0. -- To delete delpoyment and service
+    * kubectl delete kubernate-demo-app-dep
+
+1. Create yml file for spring/ jar file image create
+
+-- give me kubernates yml file for postgres database with imagepullpolicy ifnotpresent
+
+// db-deployment.yaml
+
+// Kubernate creates volume, service and deployment by it self
+
+apiVersion: v1
+kind: PersistentVolumeClaim        //create volume
+metadata:
+  name: postgres-pv-claim    // Name of volume created by kubernate
+  labels:
+    app: postgres           // label can be anything it's just a tag helps to search
+spec:
+  accessModes:
+    - ReadWriteOnce         // these volume can be read and write
+  resources:
+    requests:
+      storage: 1Gi      // it will create storage inside your host pc
+---
+apiVersion: v1
+kind: Service           // create this service
+metadata:
+  name: postgres        // Service name
+  labels:
+    app: postgres
+spec:
+  ports:
+    - port: 5432        //service port
+  selector:
+    app: postgres    //deployemnt name should be same as this service is assigned to that deployment object
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: postgres
+  labels:
+    app: postgres
+spec:
+  replicas: 4      // AS MANY PODS you want
+  selector:
+    matchLabels:
+      app: postgres
+  template:
+    metadata:
+      labels:
+        app: postgres
+    spec:
+      containers:
+        - name: postgres-container
+          image: postgres:latest
+          imagePullPolicy: IfNotPresent    //check wheather local containes this image
+          ports:
+            - containerPort: 5432
+          env:
+            - name: POSTGRES_DB
+              value: "bajajmall"
+            - name: POSTGRES_USER
+              value: "radhika"
+            - name: POSTGRES_PASSWORD
+              value: "radhika"
+          volumeMounts:
+            - mountPath: /var/lib/postgresql/data               // postgres volume path assigned inside pod
+              name: postgres-storage
+      volumes:
+        - name: postgres-storage
+          persistentVolumeClaim:
+            claimName: postgres-pv-claim                  // Configuring kubernates voulme to postgress volume
+
+
+2. To apply/create kubernate cluseter(service, deployment, pod) mentioned in file
+        * kubectl apply -f db-deployment.yaml
+
+        -f:- file
+
+    // It will create kubernate cluseter for postgres
+
+3. give me a kubernate file for spring boot application with postgres database environment configuration
+
+//app-deveployment.yml
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: bajajmall-app
+  labels:
+    app: bajajmall-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: bajajmall-app
+  template:
+    metadata:
+      labels:
+        app: bajajmall-app
+    spec:
+      containers:
+        - name: bajajmall-app-cont
+          image: radhikamundada/bajajmall-app:1.0     // Image of your spring project which have pushed in docker hub
+          imagePullPolicy: IfNotPresent                 // If not present in local docker then pull from docker hub
+          ports:
+            - containerPort: 8080
+          env:
+            - name: SPRING_DATASOURCE_URL
+              value: "jdbc:postgresql://postgres:5432/bajajmall"       //database name mentioned in postgres file and here      should be same
+            - name: SPRING_DATASOURCE_USERNAME
+              value: "radhika"
+            - name: SPRING_DATASOURCE_PASSWORD
+              value: "radhika"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: bajajmall-app-service
+  labels:
+    app: bajajmall-app-app
+spec:
+  type: NodePort
+  ports:
+    - port: 8080
+      targetPort: 8080
+      nodePort: 30000  # You can choose any available port in your cluster
+  selector:
+    app: bajajmall-app
+
+4. Create image which is specified in app-deployment.yml
+        docker build -t radhikamundada/bajajmall-app:1.0 .
+
+5. Push the image on docker hub
+        docker push radhikamundada/bajajmall-app:1.0
+
+6. To apply/create kubernate cluseter(service, deployment, pod) mentioned in file
+      * kubectl apply -f app-deployment.yml
+
+        -f:- file
+
+    // It will create kubernate cluseter for your image
+
+7. kubectl get pod
+
+8. To check your logs wheather the database is created or
+      i. Throgh pods logs
+      Terminal - kubernate dashboard -> pod logs
+          kubectl exec -it postgres-pod-name /bin/bash
+          psql -U username dbname
+      ii. Through exec
+          kubernate dashboard -> pod logs
+          psql -U username dbname
+
+---------------
+13/03/2024
+
+Previously, we were fetching our java application's data through local postgress connection
+
+But not evryone is going to access our spring application except us
+
+so we used EC2 for java application and rds for postgres
+But due to some major reasons we don't want to use
+
+container - The server which used to create container is docker
+Docker uses images to create container
+
+we can increase ec2 but not feasible due to cost hence increase container only
+hence use kubernates
+
+
+kubernates creates different pods for you and if any is expired

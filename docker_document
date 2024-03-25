@@ -1,0 +1,34 @@
+1. The "docker exec" command allows you to run commands inside an existing container. For example, docker exec
+     -it container_id /bin/bash would open a bash shell inside the container with ID container_id.
+
+ 2. Docker Compose is a tool for defining and running multi-container Docker applications. With Compose,
+    you define the services, networks, and volumes in a single docker-compose.yml file and then use docker-compose
+    up to start the entire application stack.
+
+    username: mallikaroy
+    password: mallika
+
+3. primary purpose of the Docker Engine: Docker Engine is the core of Docker. It is responsible for building, running,
+    and managing containers.
+
+4. The "docker login" command allows users to log into Docker Hub or any other Docker registry from the command-line interface.
+
+5. The default bridge network in Docker allows containers to communicate with each other on the same host machine,
+    but it does not allow for direct external access.
+
+6. Docker supports several network types, including bridge, host, and overlay. "transit" is not one of the built-in
+    network types in Docker.
+
+7. The "docker logs container_name" command allows you to view the logs of a running container.
+
+8. The "docker volume create" command is used to create a new volume.
+9. The "docker stop container_name" command stops a running container.
+10. Volumes allow you to connect specified filesystem paths of the container back to the host computer.
+
+
+
+
+
+
+
+

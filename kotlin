@@ -1,0 +1,19 @@
+
+
+String interpolating : my name is $name
+?  -> optional , we can use null here : Int?
+
+?. : safecall
+
+while, dowhile, For -> until, downto, range
+
+ListOf , arrayOf, arrayListOf
+
+mapof
+
+inline ->removed execution trip ...
+
+infix
+
+
+
